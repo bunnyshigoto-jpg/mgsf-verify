@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, Suspense } from "react"
 import { supabase } from "@/lib/supabase"
 
 /* =========================================
@@ -72,9 +72,9 @@ const isUUID = (v: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)
 
 /* =========================================
-   Page
+   核心逻辑组件（包含 useSearchParams）
    ========================================= */
-export default function Page() {
+function VerifyContent() {
   const router = useRouter()
   const sp = useSearchParams()
 
@@ -82,11 +82,6 @@ export default function Page() {
   const [displayCode, setDisplayCode] = useState("")
   const [imgSrc, setImgSrc] = useState("")
 
-  /**
-   * 🔒 关键锁：
-   * - hasResolved：是否已经决定过“显示什么数字”
-   * - hasFetched：是否已经执行过 Supabase 查询
-   */
   const hasResolved = useRef(false)
   const hasFetched = useRef(false)
 
@@ -209,5 +204,20 @@ export default function Page() {
         Copyright © 2024 Department of Myanmar Examinations.
       </p>
     </div>
+  )
+}
+
+/* =========================================
+   主组件（包裹 Suspense）
+   ========================================= */
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen w-full flex items-center justify-center bg-slate-100">
+        <div className="text-slate-600">Loading...</div>
+      </div>
+    }>
+      <VerifyContent />
+    </Suspense>
   )
 }
