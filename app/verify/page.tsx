@@ -1,11 +1,11 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { supabase } from "@/lib/supabase"
 
 /* =========================================
-   5x7 bitmap digits（老派、硬、不现代）
+   5x7 bitmap digits
    ========================================= */
 const DIGITS_5x7: Record<string, string[]> = {
   "0": ["01110","10001","10011","10101","11001","10001","01110"],
@@ -21,8 +21,7 @@ const DIGITS_5x7: Record<string, string[]> = {
 }
 
 /* =========================================
-   Canvas：数字 → PNG DataURL
-   （⚠️ 必须是顶层函数）
+   Canvas render（纯函数）
    ========================================= */
 function renderCodeToDataUrl(code: string): string {
   const pixel = 2
@@ -41,7 +40,6 @@ function renderCodeToDataUrl(code: string): string {
   if (!ctx) return ""
 
   ctx.imageSmoothingEnabled = false
-  ctx.clearRect(0, 0, width, height)
   ctx.fillStyle = "#D32F2F"
 
   let offsetX = 0
@@ -65,15 +63,13 @@ function renderCodeToDataUrl(code: string): string {
 }
 
 /* =========================================
-   工具
+   Utils
    ========================================= */
-function randomSixDigits(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString()
-}
+const randomSixDigits = () =>
+  Math.floor(100000 + Math.random() * 900000).toString()
 
-function isUUID(v: string): boolean {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)
-}
+const isUUID = (v: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)
 
 /* =========================================
    Page
@@ -82,77 +78,94 @@ export default function Page() {
   const router = useRouter()
   const sp = useSearchParams()
 
-  const [cap, setCap] = useState("")
+  const [input, setInput] = useState("")
   const [displayCode, setDisplayCode] = useState("")
-  const [codeImgSrc, setCodeImgSrc] = useState("")
-  const hasShownRealCode = useRef(false)
+  const [imgSrc, setImgSrc] = useState("")
 
-  /* 决定显示什么数字（扫码=真实号；其他=随机） */
+  /**
+   * 🔒 关键锁：
+   * - hasResolved：是否已经决定过“显示什么数字”
+   * - hasFetched：是否已经执行过 Supabase 查询
+   */
+  const hasResolved = useRef(false)
+  const hasFetched = useRef(false)
+
+  /* =========================================
+     决定显示数字（一次性决策）
+     ========================================= */
   useEffect(() => {
-  const uid = sp.get("uid")
+    if (hasResolved.current) return
 
-  // 如果已经显示过真实号，不再被刷新覆盖
-  if (!uid) {
-    if (!hasShownRealCode.current) {
+    const uid = sp.get("uid")
+
+    // ① 无 uid → 非扫码 → 随机
+    if (!uid) {
       setDisplayCode(randomSixDigits())
-    }
-    return
-  }
-
-  if (!isUUID(uid)) {
-    if (!hasShownRealCode.current) {
-      setDisplayCode(randomSixDigits())
-    }
-    return
-  }
-
-  ;(async () => {
-    const { data, error } = await supabase
-      .from("dme_certificates")
-      .select("certificate_no")
-      .eq("uuid", uid)
-      .single()
-
-    if (error || !data?.certificate_no) {
-      if (!hasShownRealCode.current) {
-        setDisplayCode(randomSixDigits())
-      }
+      hasResolved.current = true
       return
     }
 
-    // ✅ 扫码成功：只执行一次
-    setDisplayCode(String(data.certificate_no))
-    hasShownRealCode.current = true
+    // ② uid 非法 → 防注入 → 随机
+    if (!isUUID(uid)) {
+      setDisplayCode(randomSixDigits())
+      hasResolved.current = true
+      return
+    }
 
-    // 清掉 uid，但不再触发随机覆盖
-    router.replace("/verify")
-  })()
-}, [sp, router])
+    // ③ 合法 uid → 查询一次
+    if (hasFetched.current) return
+    hasFetched.current = true
 
-  /* 数字 → Canvas 图片 */
+    ;(async () => {
+      const { data, error } = await supabase
+        .from("dme_certificates")
+        .select("certificate_no")
+        .eq("uuid", uid)
+        .single()
+
+      if (error || !data?.certificate_no) {
+        setDisplayCode(randomSixDigits())
+        hasResolved.current = true
+        return
+      }
+
+      // ✅ 成功：显示真实证书号
+      setDisplayCode(String(data.certificate_no))
+      hasResolved.current = true
+
+      // 清理 uid（不影响已决策状态）
+      router.replace("/verify")
+    })()
+  }, [sp, router])
+
+  /* =========================================
+     Canvas 渲染
+     ========================================= */
   useEffect(() => {
     if (!displayCode) return
-    setCodeImgSrc(renderCodeToDataUrl(displayCode))
+    setImgSrc(renderCodeToDataUrl(displayCode))
   }, [displayCode])
 
+  /* =========================================
+     Submit
+     ========================================= */
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    const id = input.trim()
 
-    const id = cap.trim()
-
-    // 必须是纯数字（证书号）
     if (!/^\d+$/.test(id)) {
       router.push("/verify/not-found")
       return
     }
 
-    // ✅ 直接进入结果页（走 app/verify/[id]/page.tsx）
     router.push(`/verify/${id}`)
   }
 
+  /* =========================================
+     UI
+     ========================================= */
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center bg-slate-100 px-4 relative">
-      {/* Header */}
       <div className="flex flex-col items-center text-center gap-3">
         <img src="/logo-ct-dark.png" className="w-40 lg:w-80 mb-4" />
         <h1 className="text-base lg:text-2xl font-bold text-slate-900">
@@ -163,51 +176,35 @@ export default function Page() {
         </p>
       </div>
 
-      {/* Card */}
-      <div
-        className="mt-4 rounded ring-1 ring-slate-400 w-full max-w-lg"
-        style={{ backgroundColor: "#E2E8F0" }}
-      >
+      <div className="mt-4 rounded ring-1 ring-slate-400 w-full max-w-lg bg-slate-200">
         <div className="p-5">
-          {/* 红色数字（刻意不完全居中） */}
           <div
             className="select-none"
-            style={{
-              marginTop: 18,
-              marginBottom: 15,
-              paddingLeft: 0,
-              transform: "translateX(-2px)",
-            }}
+            style={{ marginTop: 18, marginBottom: 15, transform: "translateX(-2px)" }}
           >
-            {codeImgSrc && (
+            {imgSrc && (
               <img
-                src={codeImgSrc}
+                src={imgSrc}
                 alt={displayCode}
                 style={{ display: "block", margin: "0 auto" }}
               />
             )}
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-full">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2">
             <input
-              type="text"
-              value={cap}
-              onChange={(e) => setCap(e.target.value)}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
               placeholder="အထက်ပါ နံပါတ်အား ရိုက်ထည့်ပါ"
-              className="p-3 w-full rounded bg-white ring-1 ring-slate-200 text-base text-slate-500"
+              className="p-3 rounded bg-white ring-1 ring-slate-200 text-base text-slate-500"
             />
-
-            <button
-              type="submit"
-              className="py-3 bg-blue-900 text-white w-full rounded text-base"
-            >
+            <button className="py-3 bg-blue-900 text-white rounded text-base">
               Submit
             </button>
           </form>
         </div>
       </div>
 
-      {/* Footer */}
       <p className="absolute bottom-0 p-2 text-center text-sm">
         Copyright © 2024 Department of Myanmar Examinations.
       </p>

@@ -3,82 +3,95 @@ import { supabase } from "@/lib/supabase"
 import { notFound } from "next/navigation"
 import React from "react"
 
+
 type Props = {
-  params: Promise<{ id: string }>
+params: {
+id: string
 }
+}
+
 
 // 阿拉伯数字 → 缅甸数字
 function toMyanmarNumber(input: string): string {
-  const map: Record<string, string> = {
-    "0": "၀",
-    "1": "၁",
-    "2": "၂",
-    "3": "၃",
-    "4": "၄",
-    "5": "၅",
-    "6": "၆",
-    "7": "၇",
-    "8": "၈",
-    "9": "၉",
-  }
-  return (input ?? "").toString().replace(/[0-9]/g, (d) => map[d])
+const map: Record<string, string> = {
+"0": "၀",
+"1": "၁",
+"2": "၂",
+"3": "၃",
+"4": "၄",
+"5": "၅",
+"6": "၆",
+"7": "၇",
+"8": "၈",
+"9": "၉",
+}
+return (input ?? "").toString().replace(/[0-9]/g, (d) => map[d])
 }
 
-/**
- * 上半：三栏表格行（左：label / 中：- / 右：value）
- * 目标：字更大、行距更高、不加粗（value 也不要粗）
- */
+
 function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="grid grid-cols-12 items-center py-2 text-[16px] leading-7">
-      <div className="col-span-5 pl-2 text-slate-900 font-normal">
-        {label}
-      </div>
-
-      <div className="col-span-2 text-center text-slate-400 select-none">
-        -
-      </div>
-
-      <div className="col-span-5 text-slate-900 font-normal">
-        {value || "-"}
-      </div>
-    </div>
-  )
+return (
+<div className="grid grid-cols-12 items-center py-2 text-[16px] leading-7">
+<div className="col-span-5 pl-2 text-slate-900 font-normal">
+{label}
+</div>
+<div className="col-span-2 text-center text-slate-400 select-none">
+-
+</div>
+<div className="col-span-5 text-slate-900 font-normal">
+{value || "-"}
+</div>
+</div>
+)
 }
+
 
 export default async function Page({ params }: Props) {
-  const { id } = await params
+const { id } = params
 
-  const { data, error } = await supabase
-    .from("dme_certificates")
-    .select("*")
-    .eq("certificate_no", id)
-    .single()
 
-  if (error || !data) notFound()
+// ① 路由层第一道防线（非法输入直接 notFound）
+if (!/^\d+$/.test(id)) {
+notFound()
+}
 
-  const compilations = [
-    {
-      code: "STEAMS-1",
-      mm: "မြန်မာစာ၊ အင်္ဂလိပ်စာ ၊ သင်္ချာ ၊ ဓါတုဗေဒ ၊ ရူပဗေဒ ၊ ဇီဝဗေဒ",
-      en: "Myanmar, English, Mathematics, Chemistry, Physics, Biology",
-    },
-    {
-      code: "STEAMS-2",
-      mm: "မြန်မာစာ၊ အင်္ဂလိပ်စာ ၊ သင်္ချာ ၊ ဓါတုဗေဒ ၊ ရူပဗေဒ ၊ ဘောဂဗေဒ",
-      en: "Myanmar, English, Mathematics, Chemistry, Physics, Economics",
-    },
-    {
-      code: "STAMS-1",
-      mm: "မြန်မာစာ၊ အင်္ဂလိပ်စာ ၊ သင်္ချာ ၊ ပထဝီဝင် ၊ သမိုင်း ၊ ‌ဘောဂဗေဒ",
-      en: "Myanmar, English, Mathematics, Geography, History, Economics",
-    },
-    {
-      code: "STAMS-2",
-      mm: "မြန်မာစာ၊ အင်္ဂလိပ်စာ ၊ သင်္ချာ ၊ စိတ်ကြိုက်မြန်မာစာ ၊ လူမှုရေးသိပ္ပံ ၊ ဘောဂဗေဒ",
-      en: "Myanmar, English, Mathematics, Selected Myanmar, Social Science, Economics",
-    },
-  ]
+
+// ② 数据库查询
+const { data, error } = await supabase
+.from("dme_certificates")
+.select("*")
+.eq("certificate_no", id)
+.single()
+
+
+// ③ 查不到 = 官方 not-found
+if (error || !data) {
+notFound()
+}
+
+
+const compilations = [
+{
+code: "STEAMS-1",
+mm: "မြန်မာစာ၊ အင်္ဂလိပ်စာ ၊ သင်္ချာ ၊ ဓါတုဗေဒ ၊ ရူပဗေဒ ၊ ဇီဝဗေဒ",
+en: "Myanmar, English, Mathematics, Chemistry, Physics, Biology",
+},
+{
+code: "STEAMS-2",
+mm: "မြန်မာစာ၊ အင်္ဂလိပ်စာ ၊ သင်္ချာ ၊ ဓါတုဗေဒ ၊ ရူပဗေဒ ၊ ဘောဂဗေဒ",
+en: "Myanmar, English, Mathematics, Chemistry, Physics, Economics",
+},
+{
+code: "STAMS-1",
+mm: "မြန်မာစာ၊ အင်္ဂလိပ်စာ ၊ သင်္ချာ ၊ ပထဝီဝင် ၊ သမိုင်း ၊ ‌ဘောဂဗေဒ",
+en: "Myanmar, English, Mathematics, Geography, History, Economics",
+},
+{
+code: "STAMS-2",
+mm: "မြန်မာစာ၊ အင်္ဂလိပ်စာ ၊ သင်္ချာ ၊ စိတ်ကြိုက်မြန်မာစာ ၊ လူမှုရေးသိပ္ပံ ၊ ဘောဂဗေဒ",
+en: "Myanmar, English, Mathematics, Selected Myanmar, Social Science, Economics",
+},
+]
 
   return (
     <div
