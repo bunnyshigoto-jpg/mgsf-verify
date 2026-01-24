@@ -163,97 +163,97 @@ en: "Myanmar, English, Mathematics, Selected Myanmar, Social Science, Economics"
           </div>
 
           {/* ================= 下半：Compilation / Subjects 表格 ================= */}
-          <div
-            className="mt-6 rounded-[12px] overflow-hidden"
-            style={{
-              boxShadow:
-                "rgb(255,255,255) 0 0 0 0, rgb(226,232,240) 0 0 0 1px, rgba(0,0,0,0) 0 0 0 0",
-              filter:
-                "drop-shadow(rgba(0,0,0,0.06) 0px 2px 2px) drop-shadow(rgba(0,0,0,0.05) 0px 1px 1px)",
-              backgroundColor: "#FFFFFF",
-            }}
-          >
-            <table className="w-full border-separate border-spacing-0">
-              <thead>
-                <tr style={{ backgroundColor: "#F8FAFC" }}>
-                  <th
-                    className="w-[18%] px-6 py-5 text-[16px] font-normal text-slate-900 text-center align-middle"
-                    style={{
-                      borderBottom: "1px solid rgb(229,231,235)",
-                      borderRight: "1px solid rgb(229,231,235)",
-                    }}
-                  >
-                    <div className="leading-7">
-                      ဘာသာတွဲ
-                      <br />
-                      (Compilations)
-                    </div>
-                  </th>
-                  <th
-                    className="px-6 py-5 text-[16px] font-normal text-slate-900 text-center align-middle"
-                    style={{ borderBottom: "1px solid rgb(229,231,235)" }}
-                  >
-                    <div className="leading-7">
-                      ဘာသာရပ်များ
-                      <br />
-                      (Subjects)
-                    </div>
-                  </th>
-                </tr>
-              </thead>
+          <div className="mt-6 overflow-x-auto">
+            <div
+              className="rounded-[12px] inline-block min-w-full"
+              style={{
+                boxShadow:
+                  "rgb(255,255,255) 0 0 0 0, rgb(226,232,240) 0 0 0 1px, rgba(0,0,0,0) 0 0 0 0",
+                filter:
+                  "drop-shadow(rgba(0,0,0,0.06) 0px 2px 2px) drop-shadow(rgba(0,0,0,0.05) 0px 1px 1px)",
+                backgroundColor: "#FFFFFF",
+              }}
+            >
+              <table className="w-full border-separate border-spacing-0">
+                <thead>
+                  <tr style={{ backgroundColor: "#F8FAFC" }}>
+                    <th
+                      className="w-[18%] px-6 py-5 text-[16px] font-normal text-slate-900 text-center align-middle"
+                      style={{
+                        borderBottom: "1px solid rgb(229,231,235)",
+                        borderRight: "1px solid rgb(229,231,235)",
+                      }}
+                    >
+                      <div className="leading-7">
+                        ဘာသာတွဲ
+                        <br />
+                        (Compilations)
+                      </div>
+                    </th>
+                    <th
+                      className="px-6 py-5 text-[16px] font-normal text-slate-900 text-center align-middle"
+                      style={{ borderBottom: "1px solid rgb(229,231,235)" }}
+                    >
+                      <div className="leading-7">
+                        ဘာသာရပ်များ
+                        <br />
+                        (Subjects)
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
 
-              <tbody>
-                {compilations.map((item, idx) => {
-                  const rowBg = idx % 2 === 0 ? "#F1F5F9" : "#FFFFFF" // ✅ 下半交错底色
-                  const bottomLine =
-                    idx === compilations.length - 1
-                      ? "transparent"
-                      : "rgb(229,231,235)"
+                <tbody>
+                  {compilations.map((item, idx) => {
+                    const rowBg = idx % 2 === 0 ? "#F1F5F9" : "#FFFFFF"
+                    const bottomLine =
+                      idx === compilations.length - 1
+                        ? "transparent"
+                        : "rgb(229,231,235)"
 
-                  return (
-  <React.Fragment key={item.code}>
-    {/* 第一行：左栏 rowSpan + 右栏缅甸语 */}
-    <tr style={{ backgroundColor: rowBg }}>
-      <td
-        rowSpan={2}
-        className="px-5 py-0 text-[16px] font-normal text-slate-900 text-center align-middle"
-        style={{
-          borderBottom: `1px solid ${bottomLine}`,
-          borderRight: "1px solid rgb(229,231,235)",
-        }}
-      >
-        {item.code}
-      </td>
+                    return (
+                      <React.Fragment key={item.code}>
+                        <tr style={{ backgroundColor: rowBg }}>
+                          <td
+                            rowSpan={2}
+                            className="px-5 py-0 text-[16px] font-normal text-slate-900 text-center align-middle"
+                            style={{
+                              borderBottom: `1px solid ${bottomLine}`,
+                              borderRight: "1px solid rgb(229,231,235)",
+                            }}
+                          >
+                            {item.code}
+                          </td>
 
-      <td
-        className="pl-3 pr-6 pt-4 pb-3 text-[16px] leading-6 font-normal text-slate-900 align-top"
-        style={{
-          borderBottom: "1px solid rgb(229,231,235)",
-        }}
-      >
-        {item.mm}
-      </td>
-    </tr>
+                          <td
+                            className="pl-3 pr-6 pt-4 pb-3 text-[16px] leading-6 font-normal text-slate-900 align-top"
+                            style={{
+                              borderBottom: "1px solid rgb(229,231,235)",
+                            }}
+                          >
+                            {item.mm}
+                          </td>
+                        </tr>
 
-    {/* 第二行：右栏英文 */}
-    <tr style={{ backgroundColor: rowBg }}>
-      <td
-className="pl-3 pr-6 pt-3 pb-4 text-[16px] leading-6 font-normal text-slate-900 align-top whitespace-nowrap tracking-tight"
-style={{
-borderBottom: `1px solid ${bottomLine}`,
-}}
->
-{item.en}
-</td>
-    </tr>
-  </React.Fragment>
-)
-                })}
-              </tbody>
-            </table>
+                        <tr style={{ backgroundColor: rowBg }}>
+                          <td
+                            className="pl-3 pr-6 pt-3 pb-4 text-[16px] leading-6 font-normal text-slate-900 align-top whitespace-nowrap tracking-tight"
+                            style={{
+                              borderBottom: `1px solid ${bottomLine}`,
+                            }}
+                          >
+                            {item.en}
+                          </td>
+                        </tr>
+                      </React.Fragment>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
 
-              </div>
+          </div>
 {/* ================= Footer 文案区（整条灰底，从左到右） ================= */}
 <div className="w-full bg-slate-100">
   <div className="mx-auto w-full max-w-[980px] px-4 py-4 text-center text-slate-700">
@@ -284,4 +284,4 @@ borderBottom: `1px solid ${bottomLine}`,
       </div>
     </div>
   )
-}       
+}
