@@ -1,6 +1,6 @@
 // mgsf-verify/app/verify/[id]/page.tsx
 import { supabase } from "@/lib/supabase"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import React from "react"
 
 
@@ -50,9 +50,9 @@ export default async function Page({ params }: Props) {
 const { id } = params
 
 
-// ① 路由层第一道防线（非法输入直接 notFound）
+// ① 路由层第一道防线（非法输入直接跳转到错误页）
 if (!/^\d+$/.test(id)) {
-notFound()
+  redirect("/verify/not-found")
 }
 
 
@@ -64,9 +64,9 @@ const { data, error } = await supabase
 .single()
 
 
-// ③ 查不到 = 官方 not-found
+// ③ 查不到 = 跳转到自定义错误页
 if (error || !data) {
-notFound()
+  redirect("/verify/not-found")
 }
 
 
