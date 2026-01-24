@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { supabase } from "@/lib/supabase"
 
 /* =========================================
@@ -25,7 +25,7 @@ const DIGITS_5x7: Record<string, string[]> = {
    （⚠️ 必须是顶层函数）
    ========================================= */
 function renderCodeToDataUrl(code: string): string {
-  const pixel = 2   // 🔴 关键：尺寸已经调小
+  const pixel = 2
   const gap = 1
   const rows = 7
   const cols = 5
@@ -53,12 +53,7 @@ function renderCodeToDataUrl(code: string): string {
     glyph.forEach((row, y) => {
       row.split("").forEach((bit, x) => {
         if (bit === "1") {
-          ctx.fillRect(
-            offsetX + x * pixel,
-            y * pixel,
-            pixel,
-            pixel
-          )
+          ctx.fillRect(offsetX + x * pixel, y * pixel, pixel, pixel)
         }
       })
     })
@@ -76,6 +71,10 @@ function randomSixDigits(): string {
   return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
+function isUUID(v: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)
+}
+
 /* =========================================
    Page
    ========================================= */
@@ -86,28 +85,27 @@ export default function Page() {
   const [cap, setCap] = useState("")
   const [displayCode, setDisplayCode] = useState("")
   const [codeImgSrc, setCodeImgSrc] = useState("")
-  const [realCode, setRealCode] = useState<string | null>(null)
+  const hasShownRealCode = useRef(false)
 
-  /* 决定显示什么数字 */
+  /* 决定显示什么数字（扫码=真实号；其他=随机） */
   useEffect(() => {
   const uid = sp.get("uid")
 
-  // ① 只有「带 uid 的访问」才算扫码
+  // 如果已经显示过真实号，不再被刷新覆盖
   if (!uid) {
-    setDisplayCode(randomSixDigits())
+    if (!hasShownRealCode.current) {
+      setDisplayCode(randomSixDigits())
+    }
     return
   }
 
-  // ② 基本 UUID 格式校验（防乱输）
-  const isUUID =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uid)
-
-  if (!isUUID) {
-    setDisplayCode(randomSixDigits())
+  if (!isUUID(uid)) {
+    if (!hasShownRealCode.current) {
+      setDisplayCode(randomSixDigits())
+    }
     return
   }
 
-  // ③ 用 uid 查 Supabase（只取 certificate_no）
   ;(async () => {
     const { data, error } = await supabase
       .from("dme_certificates")
@@ -116,14 +114,20 @@ export default function Page() {
       .single()
 
     if (error || !data?.certificate_no) {
-      setDisplayCode(randomSixDigits())
+      if (!hasShownRealCode.current) {
+        setDisplayCode(randomSixDigits())
+      }
       return
     }
 
-    // ✅ 只有「有效扫码」才能显示真实数字
-    setDisplayCode(data.certificate_no)
+    // ✅ 扫码成功：只执行一次
+    setDisplayCode(String(data.certificate_no))
+    hasShownRealCode.current = true
+
+    // 清掉 uid，但不再触发随机覆盖
+    router.replace("/verify")
   })()
-}, [sp])
+}, [sp, router])
 
   /* 数字 → Canvas 图片 */
   useEffect(() => {
@@ -132,36 +136,22 @@ export default function Page() {
   }, [displayCode])
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-  e.preventDefault()
+    e.preventDefault()
 
-  const inputValue = cap.trim()
-  const uid = sp.get("uid")
+    const id = cap.trim()
 
-  // 基本防御
-  if (!uid || !realCode) {
-    router.push("/verify/not-found")
-    return
+    // 必须是纯数字（证书号）
+    if (!/^\d+$/.test(id)) {
+      router.push("/verify/not-found")
+      return
+    }
+
+    // ✅ 直接进入结果页（走 app/verify/[id]/page.tsx）
+    router.push(`/verify/${id}`)
   }
-
-  // 必须是纯数字
-  if (!/^\d+$/.test(inputValue)) {
-    router.push("/verify/not-found")
-    return
-  }
-
-  // 人机确认：和刚才查到的 certificate_no 比较
-  if (inputValue !== realCode) {
-    router.push("/verify/not-found")
-    return
-  }
-
-  // ✅ 验证通过：只用 uuid 进入最终页
-  router.push(`/verify/uuid/${uid}`)
-}
 
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center bg-slate-100 px-4 relative">
-
       {/* Header */}
       <div className="flex flex-col items-center text-center gap-3">
         <img src="/logo-ct-dark.png" className="w-40 lg:w-80 mb-4" />
@@ -175,11 +165,10 @@ export default function Page() {
 
       {/* Card */}
       <div
-  className="mt-4 rounded ring-1 ring-slate-400 w-full max-w-lg"
-  style={{ backgroundColor: "#E2E8F0" }}
->
+        className="mt-4 rounded ring-1 ring-slate-400 w-full max-w-lg"
+        style={{ backgroundColor: "#E2E8F0" }}
+      >
         <div className="p-5">
-
           {/* 红色数字（刻意不完全居中） */}
           <div
             className="select-none"
@@ -193,9 +182,9 @@ export default function Page() {
             {codeImgSrc && (
               <img
                 src={codeImgSrc}
-alt={displayCode}
-style={{ display: "block", margin: "0 auto" }}
-/>
+                alt={displayCode}
+                style={{ display: "block", margin: "0 auto" }}
+              />
             )}
           </div>
 
