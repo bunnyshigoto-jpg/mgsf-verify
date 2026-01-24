@@ -47,7 +47,7 @@ return (
 
 
 export default async function Page({ params }: Props) {
-const { id } = params
+  const { id } = await params  // ✅ 正确：先 await
 
 
 // ① 路由层第一道防线（非法输入直接跳转到错误页）
