@@ -1,4 +1,4 @@
-# 教育證書驗證系統 - 技術學習示例（Academic Learning Project）
+# 文件驗證系統 - 技術學習示例（Document Verification Demo - Academic Learning Project）
 
 **語言 / Language / ဘာသာစကား**  
 [繁體中文](README.md) | [English](README.en.md) | [မြန်မာဘာသာ](README.my.md)
@@ -160,16 +160,16 @@
 ```
 ┌─────────────────────────────────────────────────┐
 │         模擬資料庫（僅供學習）                      │
-│  表名：dme_certificates (示例表名)                 │
+│  表名：demo_documents (示例表名)                  │
 ├─────────────────────────────────────────────────┤
-│ uuid (示例主鍵)          | certificate_no (示例)  │
+│ uuid (示例主鍵)          | document_no (示例)     │
 │ 615bdfc9-6773-...        | 123456                │
-│ student_name (虛構)      | exam_year (虛構)       │
+│ holder_name (虛構)       | issue_year (虛構)      │
 │ ဥပမာအမည်                 | ၂၀၂၄                  │
 └─────────────────────────────────────────────────┘
          ↑                           ↑
          │ 查詢 1                     │ 查詢 2
-         │ (學習 UUID 查詢)            │ (學習證書號查詢)
+         │ (學習 UUID 查詢)            │ (學習文件號查詢)
          │                           │
 ┌────────┴──────────┐      ┌─────────┴──────────┐
 │   /verify         │      │  /verify/123456    │
@@ -249,65 +249,65 @@ npm install
 
 ```sql
 -- 建立示例資料表（僅供學習）
--- 注意：這不是真實的證書資料表
-CREATE TABLE IF NOT EXISTS dme_certificates (
+-- 注意：這不是真實的文件資料表
+CREATE TABLE IF NOT EXISTS demo_documents (
   idx SERIAL PRIMARY KEY,
-  certificate_no VARCHAR(50) UNIQUE NOT NULL,
-  exam_year VARCHAR(20),
-  seat_no VARCHAR(50),
-  student_name VARCHAR(200),
-  dob VARCHAR(50),
-  father_name VARCHAR(200),
-  mother_name VARCHAR(200),
-  compilation VARCHAR(50),
-  distinctions TEXT,
+  document_no VARCHAR(50) UNIQUE NOT NULL,
+  issue_year VARCHAR(20),
+  reference_no VARCHAR(50),
+  holder_name VARCHAR(200),
+  issue_date VARCHAR(50),
+  parent_name_1 VARCHAR(200),
+  parent_name_2 VARCHAR(200),
+  category VARCHAR(50),
+  remarks TEXT,
   status VARCHAR(20) DEFAULT 'active',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   uuid UUID DEFAULT gen_random_uuid() UNIQUE
 );
 
 -- 建立索引（學習索引優化）
-CREATE INDEX idx_certificate_no ON dme_certificates(certificate_no);
-CREATE INDEX idx_uuid ON dme_certificates(uuid);
+CREATE INDEX idx_document_no ON demo_documents(document_no);
+CREATE INDEX idx_uuid ON demo_documents(uuid);
 ```
 
 插入虛構測試資料：
 
 ```sql
 -- 插入虛構的緬甸語示例資料（純屬虛構，僅供程式測試）
-INSERT INTO dme_certificates (
-  certificate_no, exam_year, seat_no, student_name, dob,
-  father_name, mother_name, compilation, distinctions,
+INSERT INTO demo_documents (
+  document_no, issue_year, reference_no, holder_name, issue_date,
+  parent_name_1, parent_name_2, category, remarks,
   status, uuid
 ) VALUES (
   '123456',
   '၂၀၂၄',
-  'တထဝ ၃၉၄',
+  'REF-၃၉၄',
   'ဥပမာအမည်',  -- 虛構姓名
   '၁၆-၅-၂၀ဝ၅',
-  'ဥပမာဖခင်',  -- 虛構父親
-  'ဥပမာမိခင်',  -- 虛構母親
+  'ဥပမာမိဘ-၁',  -- 虛構資料
+  'ဥပမာမိဘ-၂',  -- 虛構資料
   'EXAMPLE-1',
-  'ဥပမာဘာသာရပ်၊',
+  'ဥပမာမှတ်ချက်၊',
   'active',
   '615bdfc9-6773-42f4-9c34-6ae396615fde'
 );
 
 -- 插入虛構的繁體中文示例資料（純屬虛構，僅供程式測試）
-INSERT INTO dme_certificates (
-  certificate_no, exam_year, seat_no, student_name, dob,
-  father_name, mother_name, compilation, distinctions,
+INSERT INTO demo_documents (
+  document_no, issue_year, reference_no, holder_name, issue_date,
+  parent_name_1, parent_name_2, category, remarks,
   status, uuid
 ) VALUES (
   '234567',
   '2024年',
-  '座位 485',
+  '參考編號 485',
   '範例姓名',  -- 虛構姓名
   '2005年8月12日',
-  '範例父親',  -- 虛構父親
-  '範例母親',  -- 虛構母親
+  '範例資料-1',  -- 虛構資料
+  '範例資料-2',  -- 虛構資料
   'EXAMPLE-2',
-  '範例科目',
+  '範例備註',
   'active',
   'a1b2c3d4-5678-90ab-cdef-123456789abc'
 );
@@ -354,7 +354,7 @@ http://localhost:3000/verify?uid=615bdfc9-6773-42f4-9c34-6ae396615fde
 預期結果：
 - 看到紅色像素 CAPTCHA 顯示 `123456`
 - 輸入 `123456` 後提交
-- 顯示虛構的學生資料
+- 顯示虛構的示例資料
 
 **測試情境 2：錯誤處理**
 
@@ -363,7 +363,7 @@ http://localhost:3000/verify?uid=615bdfc9-6773-42f4-9c34-6ae396615fde
 http://localhost:3000/verify
 ```
 
-- 輸入不存在的證書號（如 `999999`）
+- 輸入不存在的文件號（如 `999999`）
 - 應跳轉到錯誤頁面
 
 ---
@@ -428,15 +428,15 @@ https://你的專案名.vercel.app/verify?uid=615bdfc9-6773-42f4-9c34-6ae396615f
 | 欄位名 | 資料型別 | 用途說明 |
 |--------|----------|---------|
 | `idx` | SERIAL | 自增主鍵（學習主鍵設計） |
-| `certificate_no` | VARCHAR(50) | 示例證書號（學習唯一約束） |
-| `exam_year` | VARCHAR(20) | 示例年份（學習資料儲存） |
-| `seat_no` | VARCHAR(50) | 示例座位號 |
-| `student_name` | VARCHAR(200) | 虛構姓名（學習字符集處理） |
-| `dob` | VARCHAR(50) | 示例日期 |
-| `father_name` | VARCHAR(200) | 虛構資料 |
-| `mother_name` | VARCHAR(200) | 虛構資料 |
-| `compilation` | VARCHAR(50) | 示例分類 |
-| `distinctions` | TEXT | 示例文字欄位 |
+| `document_no` | VARCHAR(50) | 示例文件號（學習唯一約束） |
+| `issue_year` | VARCHAR(20) | 示例年份（學習資料儲存） |
+| `reference_no` | VARCHAR(50) | 示例參考號 |
+| `holder_name` | VARCHAR(200) | 虛構姓名（學習字符集處理） |
+| `issue_date` | VARCHAR(50) | 示例日期 |
+| `parent_name_1` | VARCHAR(200) | 虛構資料 |
+| `parent_name_2` | VARCHAR(200) | 虛構資料 |
+| `category` | VARCHAR(50) | 示例分類 |
+| `remarks` | TEXT | 示例文字欄位 |
 | `status` | VARCHAR(20) | 狀態欄位（學習列舉設計） |
 | `created_at` | TIMESTAMPTZ | 時間戳記（學習時區處理） |
 | `uuid` | UUID | 通用唯一識別碼（學習 UUID 應用） |
@@ -466,7 +466,7 @@ const isUUID = (v: string) =>
 - 輸入驗證的重要性
 - 防止 SQL 注入的方法
 
-#### 證書號格式驗證
+#### 文件號格式驗證
 
 ```typescript
 // 學習數字格式驗證
@@ -540,7 +540,7 @@ function renderCodeToDataUrl(code: string): string {
     ↓
 產生 CAPTCHA（Canvas API）
     ↓
-使用者輸入證書號（前端表單）
+使用者輸入文件號（前端表單）
     ↓
 再次查詢資料庫（雙重驗證）
     ↓
@@ -634,9 +634,9 @@ function renderCodeToDataUrl(code: string): string {
 - SheetJS
 - Transaction 處理
 
-#### 3. **QR Code 生成系統**
+#### 3. **QR Code 產生系統**
 **學習目標**：
-- 批次生成 QR Code
+- 批次產生 QR Code
 - 圖片處理與下載
 - PDF 生成
 
@@ -884,7 +884,7 @@ SOFTWARE.
 
 ❌ **任何形式的官方驗證**  
 ❌ **政府或教育機構系統**  
-❌ **具法律效力的證書查詢**  
+❌ **具法律效力的文件查詢**  
 ❌ **誤導公眾的用途**  
 ❌ **詐欺或偽造行為**
 
@@ -897,12 +897,12 @@ SOFTWARE.
 
 ### 如需真實驗證服務
 
-如您需要真實的證書驗證，請：
+如您需要真實的文件驗證服務，請：
 
 🏛️ **聯繫相關政府教育部門**  
 🌐 **訪問官方認證網站**  
 📞 **諮詢合法的驗證機構**  
-✉️ **直接向證書頒發單位查詢**
+✉️ **直接向文件頒發單位查詢**
 
 **本學習專案無法提供任何實際驗證功能**
 
@@ -957,7 +957,7 @@ SOFTWARE.
 **最後更新**：2024年1月  
 **版本**：v1.0.0  
 **授權**：MIT License  
-**定位**：Certificate Verification System - Technical Demonstration & Learning Example
+**定位**：Document Verification System - Technical Demonstration & Learning Example
 
 ---
 
