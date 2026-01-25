@@ -1,5 +1,8 @@
 # 緬甸教育部證書驗證系統
 
+**語言 / Language / ဘာသာစကား**  
+[繁體中文](README.md) | [English](README.en.md) | [မြန်မာဘာသာ](README.my.md)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Next.js](https://img.shields.io/badge/Next.js-16.1.4-black)](https://nextjs.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green)](https://supabase.com/)
