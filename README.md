@@ -1,4 +1,4 @@
-# 緬甸教育部證書驗證系統
+# 教育證書驗證系統 - 技術學習示例（Academic Learning Project）
 
 **語言 / Language / ဘာသာစကား**  
 [繁體中文](README.md) | [English](README.en.md) | [မြန်မာဘာသာ](README.my.md)
@@ -7,200 +7,249 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16.1.4-black)](https://nextjs.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green)](https://supabase.com/)
 
-> **⚠️ 重要聲明**  
-> 本專案**僅供學習和技術研究使用**，不得用於任何官方認證或正式證書驗證用途。  
-> 本系統並非緬甸教育部官方系統，任何因濫用本專案而產生的法律問題，開發者概不負責。  
-> 如需官方證書驗證服務，請聯繫緬甸教育部相關部門。
+---
+
+## ⚠️ 重要聲明 - CRITICAL DISCLAIMER
+
+### 本專案性質說明
+
+**這是一個純粹的技術學習專案（Academic Learning Project）**
+
+本專案是為程式設計教學、軟體工程學習、系統架構研究而建立的範例程式碼（Sample Code），
+展示如何使用 Next.js + Supabase 實作具有驗證機制的資料查詢系統。
+
+### 本專案「不是」什麼
+
+❌ **不是任何國家、地區、組織的官方系統**  
+❌ **不具備任何法律效力或認證功能**  
+❌ **不代表、不模仿、不影射任何真實存在的驗證平台**  
+❌ **不可用於任何正式、官方、具法律約束力的場景**  
+❌ **不提供真實證書驗證服務**  
+❌ **不與任何政府機構、教育機構有關聯**
+
+### 本專案「僅是」什麼
+
+✅ **純粹的程式碼學習範例（Code Example for Learning）**  
+✅ **技術架構示範（Technical Architecture Demonstration）**  
+✅ **開源教學專案（Open Source Educational Project）**  
+✅ **軟體工程練習（Software Engineering Practice）**
+
+### 資料說明
+
+本專案中所有資料、欄位名稱、介面文字均為：
+- **虛構的示例資料（Fictional Sample Data）**
+- **教學用途的假設情境（Hypothetical Scenario for Teaching）**
+- **不代表任何真實個人、機構或文件**
+
+雖然介面使用緬甸語作為展示範例（僅因該語言具備特殊字符系統，適合展示多語言處理技術），
+但這**不代表**本系統與緬甸任何機構有關，也**不應被解讀為**任何形式的官方系統。
+
+### 法律免責聲明
+
+1. **使用責任**：任何人使用、修改、部署本程式碼所產生的一切後果，由使用者自行承擔
+2. **無保證聲明**：本專案不保證程式碼的安全性、可靠性、適用性
+3. **禁止濫用**：嚴禁將本專案用於詐欺、偽造、誤導公眾或其他違法用途
+4. **無關聯聲明**：本專案與任何政府、教育機構、認證機構無任何形式的合作、授權或關聯
+
+### 如需官方服務
+
+如您需要真實的證書驗證服務，請：
+- 直接聯繫相關政府教育部門
+- 訪問官方認證網站
+- 諮詢合法的驗證機構
+
+**本專案無法、也不應被用於任何實際驗證用途**
 
 ---
 
 ## 📚 目錄
 
-1. [專案簡介](#專案簡介)
-2. [功能特性](#功能特性)
+1. [學習目標](#學習目標)
+2. [技術功能展示](#技術功能展示)
 3. [技術棧](#技術棧)
-4. [系統架構](#系統架構)
-5. [本地部署指南（小白版）](#本地部署指南小白版)
-6. [Vercel 部署指南](#vercel-部署指南)
-7. [數據庫設置](#數據庫設置)
-8. [使用教程](#使用教程)
-9. [驗證流程詳解](#驗證流程詳解)
-10. [常見問題 FAQ](#常見問題-faq)
-11. [下一版本更新計劃](#下一版本更新計劃)
-12. [優化建議](#優化建議)
-13. [聯繫方式](#聯繫方式)
+4. [系統架構說明](#系統架構說明)
+5. [本地開發環境設置](#本地開發環境設置)
+6. [Vercel 部署練習](#vercel-部署練習)
+7. [資料庫結構設計](#資料庫結構設計)
+8. [程式碼學習重點](#程式碼學習重點)
+9. [驗證流程實作解析](#驗證流程實作解析)
+10. [常見技術問題](#常見技術問題)
+11. [擴展學習方向](#擴展學習方向)
+12. [最佳實踐建議](#最佳實踐建議)
 
 ---
 
-## 專案簡介
+## 學習目標
 
-這是一個基於 **Next.js 16** 和 **Supabase** 的證書驗證系統，專為緬甸教育部證書驗證場景設計。系統通過 **二維碼掃描 + CAPTCHA 驗證** 的雙重機制，確保證書資訊的真實性和安全性。
+這個範例專案旨在幫助開發者學習以下技術概念：
 
-### 核心功能
+### 核心學習內容
 
-- ✅ 二維碼掃描驗證
-- ✅ 紅色像素圖 CAPTCHA 防機器人
-- ✅ 緬甸語本地化（緬甸數字轉換）
-- ✅ 響應式設計（桌面/手機自適應）
-- ✅ UUID 隱私保護
-- ✅ 統一錯誤處理
-- ✅ Logo 點擊返回首頁
+| 技術領域 | 學習要點 |
+|---------|---------|
+| **全端開發** | Next.js 16 App Router、React Server Components |
+| **資料庫操作** | Supabase PostgreSQL、SQL 查詢、索引設計 |
+| **安全機制** | 輸入驗證、CAPTCHA 實作、UUID 應用 |
+| **使用者體驗** | 響應式設計、錯誤處理、狀態管理 |
+| **國際化** | 多語言數字轉換、字符集處理 |
+
+### 適合對象
+
+- 正在學習 Next.js 的開發者
+- 想了解全端應用架構的學生
+- 研究安全驗證機制的工程師
+- 探索多語言系統實作的程式設計師
 
 ---
 
-## 功能特性
+## 技術功能展示
 
-### 🔐 安全特性
+### 🔐 安全機制範例
 
-| 特性 | 說明 |
-|------|------|
-| **防 SQL 注入** | 嚴格的 UUID 和證書號格式驗證 |
-| **防暴力破解** | 隨機 CAPTCHA，每次訪問不同 |
-| **隱私保護** | UUID 查詢後立即清除 URL 參數 |
-| **統一錯誤處理** | 所有錯誤統一跳轉，不洩露系統資訊 |
+本專案展示以下安全技術實作：
 
-### 🌍 多語言支持
+| 功能 | 技術實作 | 學習重點 |
+|------|----------|---------|
+| **SQL 注入防護** | UUID/證書號格式驗證 | 正則表達式應用 |
+| **防機器人** | 自訂 CAPTCHA 圖形生成 | Canvas API、像素點陣 |
+| **隱私保護** | URL 參數清理 | 前端路由控制 |
+| **錯誤處理** | 統一錯誤頁面重定向 | Next.js redirect() |
 
-- 緬甸語界面和數字顯示
-- 支持繁體中文數據
-- 支持英語數據
+### 🌍 多語言技術展示
 
-### 📱 響應式設計
+展示如何處理非拉丁字符系統：
 
-- 桌面端：寬屏佈局，表格清晰展示
-- 移動端：可橫向滾動查看完整表格內容
-- 自適應字體和間距
+- 緬甸語數字轉換演算法
+- Unicode 字符處理
+- 多語言資料存儲
+
+### 📱 響應式設計範例
+
+- Tailwind CSS 響應式工具類
+- 移動端表格橫向滾動
+- 自適應佈局實作
 
 ---
 
 ## 技術棧
 
-| 技術 | 版本 | 用途 |
-|------|------|------|
-| **Next.js** | 16.1.4 | React 框架（App Router） |
-| **React** | 19.2.3 | 前端框架 |
-| **TypeScript** | 5.x | 類型安全 |
-| **Tailwind CSS** | 4.1.18 | 樣式框架 |
-| **Supabase** | 2.91.0 | 數據庫（PostgreSQL） |
-| **QRCode** | 1.5.4 | 二維碼生成 |
-| **Vercel** | - | 部署平台 |
+| 技術 | 版本 | 用途說明 |
+|------|------|----------|
+| **Next.js** | 16.1.4 | React 框架（展示 App Router 用法） |
+| **React** | 19.2.3 | 前端框架（展示 Server Components） |
+| **TypeScript** | 5.x | 類型安全（展示型別定義） |
+| **Tailwind CSS** | 4.1.18 | 樣式框架（展示工具類應用） |
+| **Supabase** | 2.91.0 | PostgreSQL（展示雲端資料庫整合） |
+| **QRCode** | 1.5.4 | 二維碼生成（展示第三方套件整合） |
+| **Vercel** | - | 部署平台（展示 CI/CD 流程） |
 
 ---
 
-## 系統架構
+## 系統架構說明
 
-### 頁面結構
+### 路由結構（僅供學習參考）
 
 ```
-/verify                    → 驗證入口頁（CAPTCHA）
-/verify/[id]              → 證書詳情頁
-/verify/not-found         → 錯誤提示頁
+/verify                    → 入口頁（展示 CAPTCHA 實作）
+/verify/[id]              → 動態路由（展示參數處理）
+/verify/not-found         → 錯誤處理（展示重定向機制）
 ```
 
-### 數據流轉
+### 資料流程示意（學習用流程圖）
 
 ```
 ┌─────────────────────────────────────────────────┐
-│           Supabase 數據庫                        │
-│  表名：dme_certificates                          │
+│         模擬資料庫（僅供學習）                      │
+│  表名：dme_certificates (示例表名)                 │
 ├─────────────────────────────────────────────────┤
-│ uuid (主鍵)              | certificate_no        │
-│ 615bdfc9-6773-...        | 123456               │
-│ student_name             | exam_year            │
-│ မောင်လျှမ်းထက်ထွန်း       | ၂၀၂၄                 │
+│ uuid (示例主鍵)          | certificate_no (示例)  │
+│ 615bdfc9-6773-...        | 123456                │
+│ student_name (虛構)      | exam_year (虛構)       │
+│ ဥပမာအမည်                 | ၂၀၂၄                  │
 └─────────────────────────────────────────────────┘
          ↑                           ↑
          │ 查詢 1                     │ 查詢 2
-         │ (通過 uuid)                │ (通過 certificate_no)
+         │ (學習 UUID 查詢)            │ (學習證書號查詢)
          │                           │
 ┌────────┴──────────┐      ┌─────────┴──────────┐
 │   /verify         │      │  /verify/123456    │
-│  (入口頁)          │ ───→ │   (詳情頁)          │
-│  - 顯示 CAPTCHA   │Submit│  - 顯示完整信息     │
-│  - 驗證 UUID      │      │  - 雙重驗證         │
+│  (示例入口)        │ ───→ │   (示例詳情頁)      │
+│  - CAPTCHA 展示   │Submit│  - 資料顯示範例     │
+│  - UUID 驗證範例  │      │  - 雙重驗證示範     │
 └───────────────────┘      └────────────────────┘
-         │ 錯誤                      │ 錯誤
+         │ 錯誤情境                  │ 錯誤情境
          └──────────┬────────────────┘
                     ↓
          ┌──────────────────┐
          │ /verify/not-found│
-         │    (錯誤頁)       │
+         │  (錯誤處理示範)   │
          └──────────────────┘
 ```
 
+**說明**：此流程圖僅展示程式邏輯，不代表真實系統運作
+
 ---
 
-## 本地部署指南（小白版）
+## 本地開發環境設置
 
-### 前置準備
+### 前置需求（學習環境準備）
 
-在開始之前，請確保你的電腦已安裝以下軟體：
+開始學習本專案前，請先安裝以下工具：
 
-1. **Node.js**（建議 18.x 或更高版本）
-   - 下載地址：https://nodejs.org/
-   - 安裝後，打開終端輸入 `node -v` 檢查是否安裝成功
+1. **Node.js**（建議 18.x 或更高）
+   - 官網：https://nodejs.org/
+   - 驗證安裝：`node -v`
 
 2. **Git**
-   - 下載地址：https://git-scm.com/
-   - 安裝後，輸入 `git --version` 檢查
+   - 官網：https://git-scm.com/
+   - 驗證安裝：`git --version`
 
-3. **代碼編輯器**（推薦）
+3. **程式碼編輯器**（建議）
    - VS Code：https://code.visualstudio.com/
 
 ---
 
-### 步驟 1：克隆專案
-
-打開終端（Windows 用戶可以用 PowerShell 或 CMD），執行以下命令：
+### 步驟 1：下載專案程式碼
 
 ```bash
-# 克隆專案到本地
+# 克隆學習專案
 git clone https://github.com/gz-zhu/mgsf-verify.git
 
-# 進入專案目錄
+# 進入專案資料夾
 cd mgsf-verify
 ```
 
 ---
 
-### 步驟 2：安裝依賴
-
-在專案目錄中執行：
+### 步驟 2：安裝相依套件
 
 ```bash
 npm install
 ```
 
-這會自動安裝所有需要的套件（可能需要幾分鐘）。
+---
+
+### 步驟 3：建立練習用資料庫
+
+1. **註冊 Supabase 帳號**  
+   https://supabase.com/（免費學習用）
+
+2. **建立新專案**  
+   - 專案名稱：`learning-cert-verify`（或任意名稱）
+   - 設定資料庫密碼
+   - 選擇區域
+
+3. **等待專案建立完成**
 
 ---
 
-### 步驟 3：創建 Supabase 項目
+### 步驟 4：建立示例資料表
 
-1. **訪問 Supabase**  
-   打開 https://supabase.com/ 並註冊/登入
-
-2. **創建新項目**  
-   - 點擊 "New Project"
-   - 輸入項目名稱：`mgsf-verify-db`
-   - 設置數據庫密碼（**請記住這個密碼**）
-   - 選擇區域（建議選擇離你最近的）
-   - 點擊 "Create new project"
-
-3. **等待項目創建完成**（約 2 分鐘）
-
----
-
-### 步驟 4：設置數據庫
-
-1. **打開 SQL Editor**  
-   在 Supabase 控制台左側菜單，點擊 **SQL Editor**
-
-2. **執行建表 SQL**  
-   複製以下 SQL 並點擊 **Run**：
+在 Supabase SQL Editor 執行以下 SQL：
 
 ```sql
--- 創建證書表
+-- 建立示例資料表（僅供學習）
+-- 注意：這不是真實的證書資料表
 CREATE TABLE IF NOT EXISTS dme_certificates (
   idx SERIAL PRIMARY KEY,
   certificate_no VARCHAR(50) UNIQUE NOT NULL,
@@ -217,16 +266,15 @@ CREATE TABLE IF NOT EXISTS dme_certificates (
   uuid UUID DEFAULT gen_random_uuid() UNIQUE
 );
 
--- 創建索引
+-- 建立索引（學習索引優化）
 CREATE INDEX idx_certificate_no ON dme_certificates(certificate_no);
 CREATE INDEX idx_uuid ON dme_certificates(uuid);
 ```
 
-3. **插入測試數據**  
-   繼續在 SQL Editor 執行：
+插入虛構測試資料：
 
 ```sql
--- 插入緬甸語測試數據
+-- 插入虛構的緬甸語示例資料（純屬虛構，僅供程式測試）
 INSERT INTO dme_certificates (
   certificate_no, exam_year, seat_no, student_name, dob,
   father_name, mother_name, compilation, distinctions,
@@ -235,17 +283,17 @@ INSERT INTO dme_certificates (
   '123456',
   '၂၀၂၄',
   'တထဝ ၃၉၄',
-  'မောင်လျှမ်းထက်ထွန်း',
+  'ဥပမာအမည်',  -- 虛構姓名
   '၁၆-၅-၂၀ဝ၅',
-  'ဦးထွန်းလွင်',
-  'ဒေါ်လေးလေးနွယ်',
-  'STEAMS-2',
-  'ဘောဂဗေဒ၊',
+  'ဥပမာဖခင်',  -- 虛構父親
+  'ဥပမာမိခင်',  -- 虛構母親
+  'EXAMPLE-1',
+  'ဥပမာဘာသာရပ်၊',
   'active',
   '615bdfc9-6773-42f4-9c34-6ae396615fde'
 );
 
--- 插入繁體中文測試數據
+-- 插入虛構的繁體中文示例資料（純屬虛構，僅供程式測試）
 INSERT INTO dme_certificates (
   certificate_no, exam_year, seat_no, student_name, dob,
   father_name, mother_name, compilation, distinctions,
@@ -254,393 +302,195 @@ INSERT INTO dme_certificates (
   '234567',
   '2024年',
   '座位 485',
-  '陳美玲',
+  '範例姓名',  -- 虛構姓名
   '2005年8月12日',
-  '陳志明',
-  '林淑芬',
-  'STAMS-1',
-  '地理、歷史',
+  '範例父親',  -- 虛構父親
+  '範例母親',  -- 虛構母親
+  'EXAMPLE-2',
+  '範例科目',
   'active',
   'a1b2c3d4-5678-90ab-cdef-123456789abc'
 );
 ```
 
----
-
-### 步驟 5：獲取 Supabase 憑證
-
-1. **打開 Project Settings**  
-   在左側菜單點擊 ⚙️ **Settings** → **API**
-
-2. **複製以下信息**：
-   - **Project URL**（例如：`https://xxxxx.supabase.co`）
-   - **anon public key**（一長串字符）
+**重要提醒**：這些資料完全虛構，不對應任何真實人物或證書
 
 ---
 
-### 步驟 6：配置環境變量
+### 步驟 5：設定環境變數
 
-1. **在專案根目錄創建 `.env.local` 文件**  
-   （如果使用 VS Code，直接在左側文件列表右鍵 → New File）
-
-2. **填入以下內容**（替換成你的實際值）：
+在專案根目錄建立 `.env.local`：
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://你的項目ID.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=你的anon_public_key
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-```
+# Supabase 連線設定（從 Project Settings → API 取得）
+NEXT_PUBLIC_SUPABASE_URL=https://你的專案ID.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=你的_anon_public_key
 
-**範例**：
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://abcdefghijk.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+# 本地開發網址
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 ---
 
-### 步驟 7：運行專案
-
-在終端執行：
+### 步驟 6：啟動開發伺服器
 
 ```bash
 npm run dev
 ```
 
-成功後會看到：
-
-```
-✓ Ready in 2.3s
-○ Local:   http://localhost:3000
-```
+成功後瀏覽器開啟：`http://localhost:3000`
 
 ---
 
-### 步驟 8：測試驗證
+### 步驟 7：測試程式功能
 
-1. **打開瀏覽器**，訪問：  
-   `http://localhost:3000/verify?uid=615bdfc9-6773-42f4-9c34-6ae396615fde`
+**測試情境 1：UUID 查詢流程**
 
-2. **預期結果**：
-   - 看到紅色像素圖顯示：`123456`
-   - 在輸入框輸入：`123456`
-   - 點擊 Submit
-   - 跳轉到證書詳情頁，顯示學生信息
+訪問：
+```
+http://localhost:3000/verify?uid=615bdfc9-6773-42f4-9c34-6ae396615fde
+```
 
-3. **測試錯誤情況**：
-   - 訪問：`http://localhost:3000/verify`
-   - 輸入任意 6 位數（例如 `999999`）
-   - 點擊 Submit
-   - 應該跳轉到錯誤頁
+預期結果：
+- 看到紅色像素 CAPTCHA 顯示 `123456`
+- 輸入 `123456` 後提交
+- 顯示虛構的學生資料
+
+**測試情境 2：錯誤處理**
+
+訪問：
+```
+http://localhost:3000/verify
+```
+
+- 輸入不存在的證書號（如 `999999`）
+- 應跳轉到錯誤頁面
 
 ---
 
-## Vercel 部署指南
+## Vercel 部署練習
 
-### 步驟 1：準備 Vercel 賬號
+### 步驟 1：準備 Vercel 帳號
 
 1. 訪問 https://vercel.com/
-2. 使用 GitHub 賬號登入
+2. 使用 GitHub 登入
 
 ---
 
-### 步驟 2：推送代碼到 GitHub
-
-如果你還沒有推送到 GitHub：
+### 步驟 2：推送到 GitHub
 
 ```bash
-# 初始化 Git（如果還沒初始化）
+# 初始化 Git
 git init
 
-# 添加所有文件
+# 提交程式碼
 git add .
+git commit -m "Learning project initial commit"
 
-# 提交
-git commit -m "Initial commit"
-
-# 添加遠程倉庫（替換成你的倉庫地址）
-git remote add origin https://github.com/你的用戶名/mgsf-verify.git
-
-# 推送
+# 推送到 GitHub
+git remote add origin https://github.com/你的帳號/你的repo名稱.git
 git push -u origin main
 ```
 
 ---
 
-### 步驟 3：在 Vercel 導入項目
+### 步驟 3：在 Vercel 部署
 
-1. **點擊 "New Project"**
-2. **導入 Git 倉庫**  
-   選擇你的 `mgsf-verify` 倉庫
-3. **配置環境變量**  
-   點擊 "Environment Variables"，添加：
+1. 點擊 "New Project"
+2. 匯入你的 GitHub repository
+3. 設定環境變數：
 
 ```
-NEXT_PUBLIC_SUPABASE_URL = https://你的項目ID.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY = 你的anon_public_key
-NEXT_PUBLIC_SITE_URL = https://你的項目名.vercel.app
+NEXT_PUBLIC_SUPABASE_URL = https://你的專案ID.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY = 你的_anon_key
+NEXT_PUBLIC_SITE_URL = https://你的專案名.vercel.app
 ```
 
-4. **點擊 Deploy**
-
-5. **等待部署完成**（約 2 分鐘）
+4. 點擊 "Deploy"
 
 ---
 
-### 步驟 4：測試線上版本
+### 步驟 4：驗證部署
 
-部署成功後，訪問：
-
+訪問：
 ```
-https://你的項目名.vercel.app/verify?uid=615bdfc9-6773-42f4-9c34-6ae396615fde
+https://你的專案名.vercel.app/verify?uid=615bdfc9-6773-42f4-9c34-6ae396615fde
 ```
-
-應該看到和本地一樣的效果！
 
 ---
 
-## 數據庫設置
+## 資料庫結構設計
 
-### 表結構說明
+以下為本學習專案使用的資料表設計範例：
 
-| 欄位名 | 類型 | 說明 |
-|--------|------|------|
-| `idx` | SERIAL | 自增主鍵 |
-| `certificate_no` | VARCHAR(50) | 證書號（唯一） |
-| `exam_year` | VARCHAR(20) | 考試年份 |
-| `seat_no` | VARCHAR(50) | 座位號 |
-| `student_name` | VARCHAR(200) | 學生姓名 |
-| `dob` | VARCHAR(50) | 出生日期 |
-| `father_name` | VARCHAR(200) | 父親姓名 |
-| `mother_name` | VARCHAR(200) | 母親姓名 |
-| `compilation` | VARCHAR(50) | 科目組合 |
-| `distinctions` | TEXT | 優異科目 |
-| `status` | VARCHAR(20) | 狀態（active/inactive） |
-| `created_at` | TIMESTAMPTZ | 創建時間 |
-| `uuid` | UUID | 唯一標識符（用於二維碼） |
+### 示例欄位說明
 
-### 添加新證書
+| 欄位名 | 資料型別 | 用途說明 |
+|--------|----------|---------|
+| `idx` | SERIAL | 自增主鍵（學習主鍵設計） |
+| `certificate_no` | VARCHAR(50) | 示例證書號（學習唯一約束） |
+| `exam_year` | VARCHAR(20) | 示例年份（學習資料儲存） |
+| `seat_no` | VARCHAR(50) | 示例座位號 |
+| `student_name` | VARCHAR(200) | 虛構姓名（學習字符集處理） |
+| `dob` | VARCHAR(50) | 示例日期 |
+| `father_name` | VARCHAR(200) | 虛構資料 |
+| `mother_name` | VARCHAR(200) | 虛構資料 |
+| `compilation` | VARCHAR(50) | 示例分類 |
+| `distinctions` | TEXT | 示例文字欄位 |
+| `status` | VARCHAR(20) | 狀態欄位（學習列舉設計） |
+| `created_at` | TIMESTAMPTZ | 時間戳記（學習時區處理） |
+| `uuid` | UUID | 通用唯一識別碼（學習 UUID 應用） |
 
-在 Supabase SQL Editor 執行：
-
-```sql
-INSERT INTO dme_certificates (
-  certificate_no, exam_year, seat_no, student_name, dob,
-  father_name, mother_name, compilation, distinctions
-) VALUES (
-  '證書號',
-  '年份',
-  '座位號',
-  '學生姓名',
-  '出生日期',
-  '父親姓名',
-  '母親姓名',
-  'STEAMS-1',
-  '優異科目'
-);
-```
-
-**注意**：`uuid` 會自動生成，不需要手動填寫。
+**學習重點**：
+- PRIMARY KEY 與 UNIQUE 約束的差異
+- VARCHAR vs TEXT 的使用時機
+- 索引對查詢效能的影響
+- UUID 作為外部識別碼的優勢
 
 ---
 
-## 使用教程
+## 程式碼學習重點
 
-### 場景 1：通過二維碼掃描
+### 🔐 安全驗證實作
 
-1. 用戶掃描證書上的二維碼
-2. 訪問帶有 `uid` 參數的驗證頁面
-3. 系統顯示對應的證書號（紅色像素圖）
-4. 用戶手動輸入證書號
-5. 查看完整證書信息
+#### UUID 格式驗證
 
-### 場景 2：手動驗證
-
-1. 用戶直接訪問 `/verify`
-2. 看到隨機 6 位數 CAPTCHA
-3. 輸入 CAPTCHA 數字
-4. 如果證書存在，顯示詳情；否則跳轉錯誤頁
-
----
-
-## 驗證流程詳解
-
-### 🔐 安全機制
-
-#### 1. UUID 格式驗證
 ```typescript
+// 學習正則表達式應用
 const isUUID = (v: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)
 ```
 
-#### 2. 證書號格式驗證
+**學習要點**：
+- 正則表達式的構成
+- 輸入驗證的重要性
+- 防止 SQL 注入的方法
+
+#### 證書號格式驗證
+
 ```typescript
+// 學習數字格式驗證
 if (!/^\d+$/.test(id)) {
   redirect("/verify/not-found")
 }
 ```
 
-#### 3. 一次性決策鎖
-```typescript
-const hasResolved = useRef(false)  // 防止重複決策
-const hasFetched = useRef(false)   // 防止重複查詢
-```
-
-### 🔄 完整驗證流程
-
-```
-用戶掃碼
-    ↓
-/verify?uid=615bdfc9-...
-    ↓
-驗證 UUID 格式
-    ↓
-查詢數據庫（通過 UUID）
-    ↓
-顯示證書號（CAPTCHA）
-    ↓
-用戶輸入證書號
-    ↓
-查詢數據庫（通過證書號）
-    ↓
-顯示證書詳情 / 錯誤頁
-```
-
----
-
-## 常見問題 FAQ
-
-### Q1：為什麼本地運行看不到數據？
-**A**：檢查以下幾點：
-1. `.env.local` 文件是否正確配置
-2. Supabase 數據庫是否有插入測試數據
-3. 確認 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_ANON_KEY` 是否正確
-
-### Q2：部署到 Vercel 後報錯？
-**A**：確認 Vercel 環境變量是否正確設置，特別是 `NEXT_PUBLIC_SITE_URL` 要改成你的 Vercel 域名。
-
-### Q3：如何修改 CAPTCHA 樣式？
-**A**：編輯 `app/verify/page.tsx` 中的 `renderCodeToDataUrl` 函數，調整 `fillStyle` 顏色。
-
-### Q4：如何添加更多語言支持？
-**A**：在 `toMyanmarNumber` 函數中添加其他語言的數字映射。
-
-### Q5：表格在手機上顯示不全？
-**A**：已修復！現在表格可以橫向滾動。確保你使用的是最新版本的代碼。
-
-### Q6：如何生成二維碼？
-**A**：目前需要手動生成。下一版本會添加管理後台自動生成二維碼功能。
-
----
-
-## 下一版本更新計劃
-
-### 🚀 v2.0 計劃功能
-
-#### 1. **管理後台**（優先級：高）
-- ✨ 可視化添加/編輯證書
-- ✨ 批量導入 Excel/CSV
-- ✨ 自動生成二維碼並下載
-- ✨ 數據統計儀表板
-
-#### 2. **二維碼管理**（優先級：高）
-- ✨ 一鍵生成所有證書的二維碼
-- ✨ 批量下載二維碼圖片
-- ✨ 可自定義二維碼樣式和尺寸
-- ✨ 支持批量打印
-
-#### 3. **數據導入/導出**（優先級：中）
-- ✨ Excel 批量導入證書數據
-- ✨ CSV 格式導出
-- ✨ PDF 批量生成證書
-
-#### 4. **增強安全性**（優先級：中）
-- ✨ 管理員登入系統（帳號密碼）
-- ✨ 訪問日誌記錄
-- ✨ IP 限流防止暴力破解
-- ✨ 驗證碼增強（圖形驗證碼）
-
-#### 5. **多語言界面**（優先級：低）
-- ✨ 繁體中文界面
-- ✨ 英語界面
-- ✨ 語言切換功能
-
-#### 6. **API 接口**（優先級：低）
-- ✨ RESTful API 供第三方調用
-- ✨ API 金鑰管理
-- ✨ 接口文檔（Swagger）
-
----
-
-## 優化建議
-
-### 🎯 性能優化
-
-1. **添加 Redis 緩存**  
-   減少數據庫查詢次數，提升響應速度
-
-2. **圖片優化**  
-   使用 Next.js Image 組件優化 Logo 加載
-
-3. **代碼分割**  
-   按需加載組件，減小初始加載體積
-
-### 🔒 安全優化
-
-1. **添加 Rate Limiting**  
-   防止暴力破解和 API 濫用
-
-2. **數據加密**  
-   敏感信息加密存儲
-
-3. **審計日誌**  
-   記錄所有查詢操作
-
-### 🎨 UI/UX 優化
-
-1. **加載動畫**  
-   添加骨架屏和加載動畫
-
-2. **錯誤提示優化**  
-   更友好的錯誤提示文案
-
-3. **無障礙優化**  
-   支持鍵盤導航和屏幕閱讀器
-
----
-
-## 專案結構
-
-```
-mgsf-verify/
-├── app/
-│   ├── verify/
-│   │   ├── [id]/
-│   │   │   └── page.tsx          # 證書詳情頁
-│   │   ├── not-found/
-│   │   │   └── page.tsx          # 錯誤頁
-│   │   └── page.tsx              # 驗證入口頁
-│   ├── globals.css               # 全局樣式
-│   └── layout.tsx                # 根佈局
-├── lib/
-│   └── supabase.ts               # Supabase 客戶端配置
-├── public/
-│   └── logo-ct-dark.png          # Logo 圖片
-├── .env.local                    # 環境變量（本地）
-├── package.json                  # 專案依賴
-├── tsconfig.json                 # TypeScript 配置
-├── tailwind.config.ts            # Tailwind CSS 配置
-└── README.md                     # 本文件
-```
-
----
-
-## 技術文檔
-
-### 緬甸數字轉換
+#### 防止重複查詢
 
 ```typescript
+// 學習 React useRef 應用
+const hasResolved = useRef(false)
+const hasFetched = useRef(false)
+```
+
+---
+
+### 🌍 多語言處理
+
+#### 緬甸數字轉換演算法
+
+```typescript
+// 學習字符映射技術
 function toMyanmarNumber(input: string): string {
   const map: Record<string, string> = {
     "0": "၀", "1": "၁", "2": "၂", "3": "၃", "4": "၄",
@@ -650,37 +500,348 @@ function toMyanmarNumber(input: string): string {
 }
 ```
 
-### CAPTCHA 生成
-
-使用 5x7 像素點陣生成紅色數字圖形，防止機器人自動識別。
+**學習要點**：
+- Record 型別的使用
+- String.replace() 的進階用法
+- Unicode 字符處理
 
 ---
 
-## 貢獻指南
+### 🎨 CAPTCHA 生成技術
 
-由於本專案目前僅供學習使用，暫不接受外部貢獻。
+使用 Canvas API 生成像素點陣圖形：
 
-如需自定義功能，請 Fork 本專案後自行修改。
+```typescript
+// 學習 Canvas 繪圖
+function renderCodeToDataUrl(code: string): string {
+  // ... 5x7 像素點陣邏輯
+}
+```
+
+**學習要點**：
+- Canvas API 基礎
+- 像素點陣演算法
+- Base64 編碼
+
+---
+
+## 驗證流程實作解析
+
+### 完整流程圖（技術學習用）
+
+```
+使用者掃描 QR Code（模擬情境）
+    ↓
+/verify?uid=615bdfc9-...（帶參數的 URL）
+    ↓
+伺服器端驗證 UUID 格式（正則表達式）
+    ↓
+查詢資料庫（Supabase Client）
+    ↓
+產生 CAPTCHA（Canvas API）
+    ↓
+使用者輸入證書號（前端表單）
+    ↓
+再次查詢資料庫（雙重驗證）
+    ↓
+顯示資料 or 錯誤頁（條件渲染）
+```
+
+### 學習重點
+
+1. **Server Components vs Client Components**
+   - 何時使用 'use client'
+   - 伺服器端邏輯的優勢
+
+2. **資料獲取策略**
+   - async/await 模式
+   - 錯誤處理最佳實踐
+
+3. **路由與重定向**
+   - Next.js redirect()
+   - 動態路由參數
+
+---
+
+## 常見技術問題
+
+### Q1：為什麼要使用 UUID 而不是數字 ID？
+
+**A**：UUID 的優勢：
+- 無法透過遞增猜測
+- 全域唯一
+- 適合分散式系統
+- 增加安全性
+
+### Q2：CAPTCHA 為何使用像素點陣而非常見的扭曲文字？
+
+**A**：學習目的：
+- 展示自訂驗證機制
+- 避免依賴第三方服務
+- 理解驗證碼原理
+- 練習 Canvas API
+
+### Q3：為何不使用 localStorage？
+
+**A**：本專案展示無狀態驗證：
+- 伺服器端驗證更安全
+- 避免客戶端資料竄改
+- 符合現代安全最佳實踐
+
+### Q4：表格在手機上如何處理？
+
+**A**：響應式設計技巧：
+```css
+/* 學習 Tailwind 響應式 */
+<div className="overflow-x-auto">
+  <table className="min-w-full">
+```
+
+### Q5：如何產生 QR Code？
+
+**A**：在實際專案中需要：
+1. 使用 `qrcode` 套件
+2. 將 URL + UUID 編碼成 QR Code
+3. 本專案未實作此功能（可作為練習）
+
+---
+
+## 擴展學習方向
+
+### 🚀 進階功能練習建議
+
+以下為基於本專案的延伸學習方向：
+
+#### 1. **管理後台開發**
+**學習目標**：
+- 實作 CRUD 操作
+- 學習表單驗證
+- 練習使用者權限管理
+
+**技術重點**：
+- React Hook Form
+- Zod 驗證庫
+- Next.js API Routes
+
+#### 2. **批次資料處理**
+**學習目標**：
+- CSV/Excel 檔案解析
+- 批次插入資料庫
+- 錯誤處理與回滾
+
+**技術重點**：
+- PapaParse
+- SheetJS
+- Transaction 處理
+
+#### 3. **QR Code 生成系統**
+**學習目標**：
+- 批次生成 QR Code
+- 圖片處理與下載
+- PDF 生成
+
+**技術重點**：
+- qrcode 套件
+- jsPDF
+- Canvas 操作
+
+#### 4. **增強安全機制**
+**學習目標**：
+- 實作 Rate Limiting
+- 加入 JWT 驗證
+- 日誌記錄系統
+
+**技術重點**：
+- Redis
+- JWT
+- Winston Logger
+
+#### 5. **效能優化**
+**學習目標**：
+- 快取策略
+- 查詢優化
+- 圖片最佳化
+
+**技術重點**：
+- React Query
+- 資料庫索引
+- Next.js Image
+
+---
+
+## 最佳實踐建議
+
+### 🎯 程式碼品質
+
+1. **TypeScript 型別定義**
+   ```typescript
+   // 定義清楚的介面
+   interface Certificate {
+     certificate_no: string
+     student_name: string
+     // ...
+   }
+   ```
+
+2. **錯誤處理**
+   ```typescript
+   // 使用 try-catch
+   try {
+     const data = await fetchData()
+   } catch (error) {
+     console.error('Error:', error)
+     redirect('/error')
+   }
+   ```
+
+3. **程式碼分割**
+   - 將邏輯拆分成小函式
+   - 使用自訂 Hooks
+   - 元件模組化
+
+### 🔒 安全考量
+
+1. **輸入驗證**
+   - 永遠在伺服器端驗證
+   - 使用白名單而非黑名單
+   - 限制輸入長度
+
+2. **資料庫安全**
+   - 使用參數化查詢
+   - 限制查詢權限
+   - 定期備份
+
+3. **環境變數**
+   - 敏感資訊不要提交到 Git
+   - 使用 `.env.local`
+   - 在 Vercel 設定環境變數
+
+### 🎨 使用者體驗
+
+1. **載入狀態**
+   ```typescript
+   // 顯示載入指示器
+   if (loading) return <Spinner />
+   ```
+
+2. **錯誤訊息**
+   - 提供清楚的錯誤說明
+   - 避免暴露技術細節
+   - 給予解決建議
+
+3. **無障礙設計**
+   - 使用語意化 HTML
+   - 提供 alt 文字
+   - 鍵盤導航支援
+
+---
+
+## 專案結構說明
+
+```
+mgsf-verify/（學習專案）
+├── app/
+│   ├── verify/
+│   │   ├── [id]/
+│   │   │   └── page.tsx          # 動態路由範例
+│   │   ├── not-found/
+│   │   │   └── page.tsx          # 錯誤處理範例
+│   │   └── page.tsx              # 入口頁範例
+│   ├── globals.css               # 全域樣式
+│   └── layout.tsx                # Layout 範例
+├── lib/
+│   └── supabase.ts               # Supabase 設定範例
+├── public/
+│   └── logo-ct-dark.png          # 靜態資源範例
+├── .env.local.example            # 環境變數範例
+├── package.json                  # 相依套件列表
+├── tsconfig.json                 # TypeScript 設定
+├── tailwind.config.ts            # Tailwind 設定
+└── README.md                     # 本文件
+```
+
+---
+
+## 學習資源
+
+### 官方文件
+
+- **Next.js**：https://nextjs.org/docs
+- **React**：https://react.dev/
+- **Supabase**：https://supabase.com/docs
+- **Tailwind CSS**：https://tailwindcss.com/docs
+
+### 推薦教程
+
+- Next.js 完整教程
+- TypeScript 深入淺出
+- PostgreSQL 資料庫設計
+- Web 安全最佳實踐
+
+---
+
+## 貢獻說明
+
+### 本專案定位
+
+這是一個**教學用範例專案**，主要目的是：
+- 提供學習參考
+- 展示技術實作
+- 分享程式碼範例
+
+### 貢獻方式
+
+歡迎以下形式的貢獻：
+- 回報程式錯誤（Bug Reports）
+- 提出改進建議（Feature Requests）
+- 文件改善（Documentation）
+- 程式碼優化（Code Improvements）
+
+請透過 GitHub Issues 或 Pull Requests 參與
+
+### Fork 與客製化
+
+如果您想基於本專案開發自己的應用：
+
+1. **Fork 本專案**到您的 GitHub 帳號
+2. **修改專案名稱**，避免與本學習專案混淆
+3. **客製化所有內容**，包括：
+   - 資料表結構
+   - 欄位名稱
+   - 介面文字
+   - 驗證邏輯
+4. **添加明確聲明**，說明您的專案與本學習範例的關係
+5. **遵守 MIT 授權條款**
+
+**重要提醒**：
+- 請勿將您的客製化版本宣稱為官方系統
+- 請勿用於詐欺或誤導用途
+- 請為您的應用負完全責任
 
 ---
 
 ## 聯繫方式
 
-### 如需技術支持或功能定制
+### 技術討論與問題回報
 
 - **作者**：gz-zhu
 - **GitHub**：https://github.com/gz-zhu/mgsf-verify
-- **Email**：請通過 GitHub Issues 聯繫
+- **Issues**：https://github.com/gz-zhu/mgsf-verify/issues
 
-### 如需專業工程師服務
+### 學習交流
 
-本專案可作為參考模板，但如需：
-- 企業級功能開發
-- 系統集成服務
-- 安全審計和優化
-- 大規模部署支持
+歡迎透過 GitHub Issues 討論：
+- 技術實作問題
+- 程式碼改進建議
+- 學習心得分享
+- Bug 回報
 
-**請聯繫專業的軟體開發團隊或全棧工程師**。
+### 不提供的服務
+
+❌ 官方證書驗證服務  
+❌ 法律諮詢或認證  
+❌ 商業化支援  
+❌ 客製化開發（商業）
 
 ---
 
@@ -690,23 +851,136 @@ MIT License
 
 Copyright (c) 2024 gz-zhu
 
-本專案採用 MIT 許可證，但請注意：
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-⚠️ **本專案僅供學習和技術研究**  
-⚠️ **不得用於任何官方認證或正式證書驗證**  
-⚠️ **任何因濫用而產生的法律問題，開發者概不負責**
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## ⚠️ 最終提醒
+
+### 本專案的唯一用途
+
+✅ **程式設計教學**  
+✅ **技術架構學習**  
+✅ **開源程式碼參考**  
+✅ **軟體工程練習**
+
+### 本專案絕不可用於
+
+❌ **任何形式的官方驗證**  
+❌ **政府或教育機構系統**  
+❌ **具法律效力的證書查詢**  
+❌ **誤導公眾的用途**  
+❌ **詐欺或偽造行為**
+
+### 責任聲明
+
+1. **開發者責任**：本專案作者僅提供程式碼範例，不對任何使用後果負責
+2. **使用者責任**：任何人使用、修改、部署本程式碼，需自行承擔全部責任
+3. **無擔保聲明**：本程式碼按「現狀」提供，不提供任何形式的保證
+4. **法律遵循**：使用者需確保其使用方式符合當地法律法規
+
+### 如需真實驗證服務
+
+如您需要真實的證書驗證，請：
+
+🏛️ **聯繫相關政府教育部門**  
+🌐 **訪問官方認證網站**  
+📞 **諮詢合法的驗證機構**  
+✉️ **直接向證書頒發單位查詢**
+
+**本學習專案無法提供任何實際驗證功能**
 
 ---
 
 ## 致謝
 
-- Next.js 團隊
-- Supabase 團隊
-- Tailwind CSS 團隊
-- Vercel 平台
+感謝以下開源專案與平台：
+
+- **Next.js 團隊** - 提供優秀的 React 框架
+- **Supabase 團隊** - 提供便捷的後端服務
+- **Tailwind CSS 團隊** - 提供高效的樣式框架
+- **Vercel 平台** - 提供免費的部署服務
+- **開源社群** - 提供無數的學習資源
+
+感謝所有為開源生態貢獻的開發者！
 
 ---
 
+## 版本紀錄
+
+### v1.0.0（2024年1月）
+- ✅ 初始版本發布
+- ✅ 基本驗證流程實作
+- ✅ CAPTCHA 機制
+- ✅ 響應式設計
+- ✅ 多語言數字轉換
+- ✅ 完整文件說明
+
+### 未來學習方向（非承諾功能）
+
+以下僅為可能的學習延伸方向，**不代表實際開發計劃**：
+
+- 管理後台範例
+- 批次資料處理示範
+- QR Code 生成教學
+- 進階安全機制展示
+- 效能優化範例
+- 測試案例撰寫
+
+---
+
+## 專案標籤
+
+`#學習專案` `#技術示範` `#Next.js教學` `#全端開發` `#開源教育`  
+`#Learning-Project` `#Technical-Demo` `#Educational` `#Open-Source`
+
+---
+
+**專案性質**：Academic Learning Project / 學術學習專案  
+**專案目的**：Technical Education / 技術教育  
 **最後更新**：2024年1月  
 **版本**：v1.0.0  
-**下一版本**：v2.0.0（計劃中）
+**授權**：MIT License  
+**定位**：Certificate Verification System - Technical Demonstration & Learning Example
+
+---
+
+## 📖 閱讀其他語言版本
+
+- [繁體中文版本](README.md)（本文件）
+- [English Version](README.en.md)
+- [မြန်မာဘာသာ](README.my.md)
+
+---
+
+**⚠️ 重要：本專案僅為程式設計教學範例，不具任何官方性質或法律效力**
+
+**⚠️ Important: This is a coding tutorial example only, with no official status or legal validity**
+
+**⚠️ အရေးကြီးသော်: ဤသည်မှာ ပရိုဂရမ်ရေးသားခြင်း သင်ခန်းစာ ဥပမာသာဖြစ်ပြီး တရားဝင် သို့မဟုတ် ဥပဒေရေးရာ တရားဝင်မှု မရှိပါ**
+
+---
+
+<div align="center">
+
+### 學習愉快！Happy Learning! သင်ယူမှု ပျော်ရွှင်ပါစေ！
+
+Made with ❤️ for Education & Open Source
+
+</div>
