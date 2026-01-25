@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 export default function VerifyUnavailablePage() {
 return (
 <main className="min-h-screen w-full bg-slate-50">
@@ -5,12 +7,15 @@ return (
 <div className="w-full flex flex-col items-center text-center px-4 pt-[18vh]">
     
         {/* Logo：放大（对齐你目标图） */}
-        <img
-          src="/logo-ct-dark.png"
-          alt="Department of Myanmar Examinations"
-          className="w-48 sm:w-56 md:w-64 mb-4"
-          draggable={false}
-        />
+
+      <Link href="/verify">  {/* ← 加了这个 */}
+       <img
+    src="/logo-ct-dark.png"
+    alt="Department of Myanmar Examinations"
+    className="w-48 sm:w-56 md:w-64 mb-4 cursor-pointer" 
+    draggable={false}
+  />
+</Link>  {/* ← 加了这个 */}
 
         {/* Myanmar title：比英文更醒目 */}
         <div className="text-[20px] sm:text-[24px] font-semibold text-black leading-tight mb-2">

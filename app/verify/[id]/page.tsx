@@ -1,6 +1,7 @@
 // mgsf-verify/app/verify/[id]/page.tsx
 import { supabase } from "@/lib/supabase"
 import { notFound, redirect } from "next/navigation"
+import Link from "next/link"  // ← 只加了这一行
 import React from "react"
 
 
@@ -9,7 +10,6 @@ params: {
 id: string
 }
 }
-
 
 // 阿拉伯数字 → 缅甸数字
 function toMyanmarNumber(input: string): string {
@@ -120,12 +120,14 @@ en: "Myanmar, English, Mathematics, Selected Myanmar, Social Science, Economics"
             <div className="flex items-center gap-6 pt-4 pb-2">
   {/* 左侧 Logo：≈ 1/4 */}
   <div className="w-1/4 flex justify-center">
-    <img
-      src="/logo-ct-dark.png"
-      alt="Logo"
-      className="w-36 h-auto object-contain"
-      draggable={false}
-    />
+    <Link href="/verify">
+      <img
+        src="/logo-ct-dark.png"
+        alt="Logo"
+        className="w-36 h-auto object-contain cursor-pointer"
+        draggable={false}
+      />
+    </Link>
   </div>
 
   {/* 右侧标题：≈ 2/3，区域内居中 */}
