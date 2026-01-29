@@ -1,11 +1,10 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useRef, useState, Suspense } from "react"
-import { supabase } from "@/lib/supabase"
+import { useEffect, useState, Suspense } from "react"
 
 /* =========================================
-   5x7 bitmap digits
+   5x7 bitmap digits (UNCHANGED)
    ========================================= */
 const DIGITS_5x7: Record<string, string[]> = {
   "0": ["01110","10001","10011","10101","11001","10001","01110"],
@@ -21,7 +20,7 @@ const DIGITS_5x7: Record<string, string[]> = {
 }
 
 /* =========================================
-   Canvas render（纯函数）
+   Canvas render (UNCHANGED)
    ========================================= */
 function renderCodeToDataUrl(code: string): string {
   const pixel = 2
@@ -65,76 +64,76 @@ function renderCodeToDataUrl(code: string): string {
 /* =========================================
    Utils
    ========================================= */
-const randomSixDigits = () =>
-  Math.floor(100000 + Math.random() * 900000).toString()
-
 const isUUID = (v: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)
 
+const randomSixDigits = () =>
+  Math.floor(100000 + Math.random() * 900000).toString()
+
 /* =========================================
-   核心逻辑组件（包含 useSearchParams）
+   Core Component (MERGED LOGIC)
    ========================================= */
 function VerifyContent() {
   const router = useRouter()
   const sp = useSearchParams()
 
+  const uid = sp.get("uid") || ""
+  const qrMode = !!uid && isUUID(uid)
+
   const [input, setInput] = useState("")
   const [displayCode, setDisplayCode] = useState("")
   const [imgSrc, setImgSrc] = useState("")
-
-  const hasResolved = useRef(false)
-  const hasFetched = useRef(false)
+  const [loading, setLoading] = useState(false)
 
   /* =========================================
-     决定显示数字（一次性决策）
+     Generate display code
      ========================================= */
   useEffect(() => {
-    if (hasResolved.current) return
-
-    const uid = sp.get("uid")
-
-    // ① 无 uid → 非扫码 → 随机
-    if (!uid) {
-      setDisplayCode(randomSixDigits())
-      hasResolved.current = true
-      return
-    }
-
-    // ② uid 非法 → 防注入 → 随机
-    if (!isUUID(uid)) {
-      setDisplayCode(randomSixDigits())
-      hasResolved.current = true
-      return
-    }
-
-    // ③ 合法 uid → 查询一次
-    if (hasFetched.current) return
-    hasFetched.current = true
+    let cancelled = false
 
     ;(async () => {
-      const { data, error } = await supabase
-        .from("dme_certificates")
-        .select("certificate_no")
-        .eq("uuid", uid)
-        .single()
+      setLoading(true)
 
-      if (error || !data?.certificate_no) {
+      // Manual mode
+      if (!qrMode) {
         setDisplayCode(randomSixDigits())
-        hasResolved.current = true
+        setLoading(false)
         return
       }
 
-      // ✅ 成功：显示真实证书号
-      setDisplayCode(String(data.certificate_no))
-      hasResolved.current = true
+      // QR mode → server-generated rotating code
+      try {
+        const res = await fetch("/api/code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ uid }),
+        })
 
-      // 清理 uid（不影响已决策状态）
-      router.replace("/verify")
+        const json = await res.json().catch(() => null)
+
+        if (!res.ok || !json?.code) {
+          setDisplayCode(randomSixDigits())
+          setLoading(false)
+          return
+        }
+
+        if (!cancelled) {
+          setDisplayCode(String(json.code))
+        }
+      } catch {
+        setDisplayCode(randomSixDigits())
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
     })()
-  }, [sp, router])
+
+    return () => {
+      cancelled = true
+    }
+  }, [qrMode, uid])
 
   /* =========================================
-     Canvas 渲染
+     Canvas render
      ========================================= */
   useEffect(() => {
     if (!displayCode) return
@@ -144,20 +143,39 @@ function VerifyContent() {
   /* =========================================
      Submit
      ========================================= */
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const id = input.trim()
+    const code = input.trim()
 
-    if (!/^\d+$/.test(id)) {
+    if (!/^\d{6}$/.test(code)) {
       router.push("/verify/not-found")
       return
     }
 
-    router.push(`/verify/${id}`)
+    // QR verification
+    if (qrMode) {
+      const res = await fetch("/api/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid, code }),
+      })
+
+      const json = await res.json().catch(() => null)
+
+      if (json?.ok && json.redirectTo) {
+        router.push(json.redirectTo)
+      } else {
+        router.push("/verify/not-found")
+      }
+      return
+    }
+
+    // Manual fallback
+    router.push(`/verify/${code}`)
   }
 
   /* =========================================
-     UI
+     UI (UNCHANGED DESIGN)
      ========================================= */
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center bg-slate-100 px-4 relative">
@@ -193,8 +211,11 @@ function VerifyContent() {
               placeholder="အထက်ပါ နံပါတ်အား ရိုက်ထည့်ပါ"
               className="p-3 rounded bg-white ring-1 ring-slate-200 text-base text-slate-500"
             />
-            <button className="py-3 bg-blue-900 text-white rounded text-base">
-              Submit
+            <button
+              disabled={loading}
+              className="py-3 bg-blue-900 text-white rounded text-base disabled:opacity-60"
+            >
+              {loading ? "Checking..." : "Submit"}
             </button>
           </form>
         </div>
@@ -208,15 +229,17 @@ function VerifyContent() {
 }
 
 /* =========================================
-   主组件（包裹 Suspense）
+   Suspense wrapper (UNCHANGED)
    ========================================= */
 export default function Page() {
   return (
-    <Suspense fallback={
-      <div className="h-screen w-full flex items-center justify-center bg-slate-100">
-        <div className="text-slate-600">Loading...</div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="h-screen w-full flex items-center justify-center bg-slate-100">
+          <div className="text-slate-600">Loading...</div>
+        </div>
+      }
+    >
       <VerifyContent />
     </Suspense>
   )
